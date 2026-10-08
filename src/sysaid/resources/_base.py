@@ -12,6 +12,12 @@ if TYPE_CHECKING:
 
 DEFAULT_PAGE_SIZE = 100
 
+# Resource classes define methods named ``list``/``iter``, which would shadow the
+# builtins in annotations inside the class body; these aliases avoid that.
+RecordList = list[Record]
+JSONDict = dict[str, Any]
+JSONList = list[dict[str, Any]]
+
 
 def query(
     *,
@@ -32,7 +38,7 @@ class Resource:
     def _get(self, path: str, params: Mapping[str, Any] | None = None) -> Record:
         return Record(self._client.request("GET", path, params=params))
 
-    def _list(self, path: str, params: Mapping[str, Any] | None = None) -> list[Record]:
+    def _list(self, path: str, params: Mapping[str, Any] | None = None) -> RecordList:
         return [Record(item) for item in self._client.request("GET", path, params=params)]
 
     def _iter(

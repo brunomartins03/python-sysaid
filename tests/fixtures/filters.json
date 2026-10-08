@@ -1,0 +1,5 @@
+[
+  {"id": "status", "type": "list",
+   "values": [{"id": "1", "caption": "closed"}, {"id": "2", "caption": "awaiting"}],
+   "metadata": {"limit": "20", "offset": "0", "total": "2"}}
+]

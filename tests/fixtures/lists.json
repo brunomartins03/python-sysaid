@@ -1,0 +1,4 @@
+[
+  {"id": "priority", "caption": "Priority",
+   "values": [{"id": "1", "caption": "Highest"}, {"id": "2", "caption": "High"}]}
+]
