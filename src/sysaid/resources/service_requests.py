@@ -32,6 +32,8 @@ def problem_type(*levels: str) -> str:
 
 
 class ServiceRequests(Resource):
+    """Service requests: incidents, requests, problems and changes."""
+
     def list(
         self,
         *,
@@ -92,6 +94,7 @@ class ServiceRequests(Resource):
         return self._list("/sr/search", {**params, "query": text, "offset": offset, "limit": limit})
 
     def count(self, **filters: Any) -> int:
+        """Number of SRs matching the filters."""
         result = self._client.request("GET", "/sr/count", params=filters)
         return int(result["count"])
 
@@ -163,11 +166,13 @@ class ServiceRequests(Resource):
         self._client.request("DELETE", "/sr", params={"ids": id_list})
 
     def add_link(self, sr_id: int | str, name: str, link: str) -> None:
+        """Add a named link to the SR."""
         self._client.request(
             "POST", f"/sr/{quote_segment(sr_id)}/link", json={"name": name, "link": link}
         )
 
     def delete_link(self, sr_id: int | str, name: str) -> None:
+        """Delete a link from the SR by name."""
         self._client.request("DELETE", f"/sr/{quote_segment(sr_id)}/link", json={"name": name})
 
     def add_attachment(
@@ -180,6 +185,7 @@ class ServiceRequests(Resource):
         )
 
     def delete_attachment(self, sr_id: int | str, file_id: str) -> None:
+        """Delete an attachment by its file id."""
         self._client.request(
             "DELETE", f"/sr/{quote_segment(sr_id)}/attachment", json={"fileId": file_id}
         )
@@ -202,6 +208,7 @@ class ServiceRequests(Resource):
         self._client.request("POST", f"/sr/{quote_segment(sr_id)}/activity", json=body)
 
     def delete_activity(self, sr_id: int | str, activity_id: int) -> None:
+        """Delete an activity by id."""
         self._client.request(
             "DELETE", f"/sr/{quote_segment(sr_id)}/activity", json={"id": activity_id}
         )

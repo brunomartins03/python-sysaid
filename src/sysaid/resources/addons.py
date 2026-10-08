@@ -19,7 +19,10 @@ def _payload(name: str, active: bool | None, params: Mapping[str, Any] | None) -
 
 
 class Addons(Resource):
+    """SysAid add-ons and their parameters."""
+
     def list(self) -> JSONList:
+        """All add-ons (``params`` is always ``None`` in this list)."""
         result: JSONList = self._client.request("GET", "/addons")
         return result
 

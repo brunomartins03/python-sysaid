@@ -9,6 +9,8 @@ from ._base import Resource
 
 
 class ResourceBundle(Resource):
+    """Resource-bundle key translation."""
+
     def translate(self, keys: Sequence[str], locale: str | None = None) -> dict[str, str]:
         """Translate resource-bundle keys, for the account locale or the given one."""
         path = "/rb" if locale is None else f"/rb/{quote_segment(locale)}"

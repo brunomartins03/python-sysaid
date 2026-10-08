@@ -35,6 +35,7 @@ class Filters(Resource):
         offset: int | None = None,
         limit: int | None = None,
     ) -> JSONDict:
+        """One filter with its values; ``offset``/``limit`` page the values."""
         result: JSONDict = self._client.request(
             "GET",
             f"/filters/{quote_segment(filter_id)}",

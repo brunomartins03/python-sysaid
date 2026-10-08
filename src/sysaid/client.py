@@ -106,6 +106,7 @@ class SysAid:
         self.close()
 
     def close(self) -> None:
+        """Close the underlying HTTP session."""
         self.session.close()
         self._logged_in = False
 

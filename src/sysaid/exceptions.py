@@ -36,6 +36,7 @@ class RelationError(BadRequestError):
 
     @property
     def failures(self) -> list[str]:
+        """The per-item messages from the server's CSV error text."""
         return [part.strip() for part in self.message.split(",") if part.strip()]
 
 

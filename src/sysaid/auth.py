@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 @dataclass(frozen=True)
 class LoginResult:
+    """Outcome of a successful login."""
+
     logged_in: bool
     user_id: str | None
     language: str | None
@@ -25,6 +27,7 @@ class LoginResult:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> LoginResult:
+        """Build from the ``/login`` response body."""
         user = Record(data["user"]) if isinstance(data.get("user"), dict) else None
         user_id = data.get("user_id") or (user.id if user else None)
         return cls(

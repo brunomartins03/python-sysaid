@@ -10,6 +10,8 @@ from ._base import JSONList, Resource
 
 
 class Reports(Resource):
+    """Report metadata and preview runs."""
+
     def operators(self, type: str | None = None) -> JSONList:
         """Field operators, optionally for one data type (``string``, ``date``, ``int``...)."""
         result: JSONList = self._client.request("GET", "/reports/operators", params={"type": type})

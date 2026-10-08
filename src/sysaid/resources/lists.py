@@ -9,6 +9,8 @@ from ._base import JSONDict, JSONList, Resource, query
 
 
 class Lists(Resource):
+    """Id/caption pairs behind dropdown fields."""
+
     def list(
         self,
         *,
