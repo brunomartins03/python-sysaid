@@ -13,6 +13,7 @@ from ._params import build_params, encode_json
 from .exceptions import AuthenticationError, error_from_response
 from .resources.filters import Filters
 from .resources.lists import Lists
+from .resources.service_requests import ServiceRequests
 from .resources.users import Users
 
 API_PATH = "/api/v1"
@@ -47,6 +48,7 @@ class SysAid:
         self.users = Users(self)
         self.filters = Filters(self)
         self.lists = Lists(self)
+        self.service_requests = ServiceRequests(self)
 
     def __repr__(self) -> str:
         return f"SysAid({self.api_url!r}, username={self._username!r})"
