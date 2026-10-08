@@ -12,10 +12,14 @@ from . import auth as _auth
 from ._params import build_params, encode_json
 from .exceptions import AuthenticationError, error_from_response
 from .resources.action_items import ActionItems
+from .resources.addons import Addons
 from .resources.assets import Assets
 from .resources.cis import CIs
 from .resources.filters import Filters
 from .resources.lists import Lists
+from .resources.password_services import PasswordServices
+from .resources.reports import Reports
+from .resources.resource_bundle import ResourceBundle
 from .resources.service_requests import ServiceRequests
 from .resources.users import Users
 
@@ -55,6 +59,10 @@ class SysAid:
         self.action_items = ActionItems(self)
         self.assets = Assets(self)
         self.cis = CIs(self)
+        self.addons = Addons(self)
+        self.resource_bundle = ResourceBundle(self)
+        self.password_services = PasswordServices(self)
+        self.reports = Reports(self)
 
     def __repr__(self) -> str:
         return f"SysAid({self.api_url!r}, username={self._username!r})"
