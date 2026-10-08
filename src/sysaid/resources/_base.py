@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Iterator, Mapping, Sequence
+from os import PathLike
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from ..models import Record
@@ -29,6 +31,14 @@ def query(
 ) -> dict[str, Any]:
     """Common list parameters (``dir`` is exposed as ``direction``) plus extras."""
     return {"view": view, "fields": fields, "sort": sort, "dir": direction, **extra}
+
+
+def read_upload(file: bytes | str | PathLike[str], filename: str | None) -> tuple[str, bytes]:
+    """Resolve an upload given as bytes or a path into ``(filename, content)``."""
+    if isinstance(file, bytes):
+        return filename or "file", file
+    path = Path(file)
+    return filename or path.name, path.read_bytes()
 
 
 class Resource:

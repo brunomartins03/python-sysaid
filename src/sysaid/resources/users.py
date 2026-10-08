@@ -4,11 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Iterator, Sequence
 from os import PathLike
-from pathlib import Path
 
 from .._params import quote_segment
 from ..models import Record
-from ._base import DEFAULT_PAGE_SIZE, JSONDict, RecordList, Resource, query
+from ._base import DEFAULT_PAGE_SIZE, JSONDict, RecordList, Resource, query, read_upload
 
 MAX_PHOTO_BYTES = 500 * 1024
 
@@ -73,14 +72,10 @@ class Users(Resource):
         return bytes(response.content)
 
     def upload_photo(
-        self, user_id: int | str, photo: bytes | str | PathLike[str], filename: str = "photo"
+        self, user_id: int | str, photo: bytes | str | PathLike[str], filename: str | None = None
     ) -> None:
         """Upload a photo, given as bytes or a file path. The server limit is 500 KB."""
-        if isinstance(photo, bytes):
-            content = photo
-        else:
-            content = Path(photo).read_bytes()
-            filename = Path(photo).name
+        filename, content = read_upload(photo, filename)
         if len(content) > MAX_PHOTO_BYTES:
             raise ValueError(f"photo is {len(content)} bytes; the limit is {MAX_PHOTO_BYTES}")
         self._client.request(

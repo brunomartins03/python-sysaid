@@ -1,0 +1,8 @@
+[
+  {"id": "5433", "canUpdate": "true", "canDelete": "false", "canArchive": "false",
+   "info": [
+     {"key": "title", "keyCaption": "Title", "value": "basic Service Request", "valueCaption": "basic Service Request"},
+     {"key": "insert_time", "keyCaption": "Request Time", "value": "1397564800000", "valueCaption": "2014-04-01 11:46:48"},
+     {"key": "request_user", "keyCaption": "Request User", "value": "leo@law.com", "valueCaption": "Leonardo Gonzalez"}
+   ]}
+]
