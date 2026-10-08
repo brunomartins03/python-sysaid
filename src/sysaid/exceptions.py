@@ -31,6 +31,14 @@ class BadRequestError(SysAidHTTPError):
     """HTTP 400."""
 
 
+class RelationError(BadRequestError):
+    """CI relations could not be created; ``failures`` lists each failing item."""
+
+    @property
+    def failures(self) -> list[str]:
+        return [part.strip() for part in self.message.split(",") if part.strip()]
+
+
 class UnauthorizedError(SysAidHTTPError):
     """HTTP 401."""
 

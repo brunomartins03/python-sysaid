@@ -13,6 +13,7 @@ from ._params import build_params, encode_json
 from .exceptions import AuthenticationError, error_from_response
 from .resources.action_items import ActionItems
 from .resources.assets import Assets
+from .resources.cis import CIs
 from .resources.filters import Filters
 from .resources.lists import Lists
 from .resources.service_requests import ServiceRequests
@@ -53,6 +54,7 @@ class SysAid:
         self.service_requests = ServiceRequests(self)
         self.action_items = ActionItems(self)
         self.assets = Assets(self)
+        self.cis = CIs(self)
 
     def __repr__(self) -> str:
         return f"SysAid({self.api_url!r}, username={self._username!r})"
