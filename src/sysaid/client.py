@@ -11,6 +11,9 @@ import requests
 from . import auth as _auth
 from ._params import build_params, encode_json
 from .exceptions import AuthenticationError, error_from_response
+from .resources.filters import Filters
+from .resources.lists import Lists
+from .resources.users import Users
 
 API_PATH = "/api/v1"
 
@@ -41,6 +44,9 @@ class SysAid:
         self._username = username
         self._password = password
         self._logged_in = False
+        self.users = Users(self)
+        self.filters = Filters(self)
+        self.lists = Lists(self)
 
     def __repr__(self) -> str:
         return f"SysAid({self.api_url!r}, username={self._username!r})"
