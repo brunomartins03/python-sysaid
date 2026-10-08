@@ -26,6 +26,12 @@ from .resources.users import Users
 API_PATH = "/api/v1"
 
 
+def api_url_for(base_url: str) -> str:
+    """``https://host`` or ``https://host/api/v1`` -> ``https://host/api/v1``."""
+    base = base_url.rstrip("/")
+    return base if base.endswith(API_PATH) else base + API_PATH
+
+
 class SysAid:
     """Client for the SysAid REST API.
 
@@ -43,8 +49,7 @@ class SysAid:
         verify: bool | str = True,
         session: requests.Session | None = None,
     ) -> None:
-        base = base_url.rstrip("/")
-        self.api_url = base if base.endswith(API_PATH) else base + API_PATH
+        self.api_url = api_url_for(base_url)
         self.account_id = account_id
         self.timeout = timeout
         self.session = session or requests.Session()
@@ -63,6 +68,28 @@ class SysAid:
         self.resource_bundle = ResourceBundle(self)
         self.password_services = PasswordServices(self)
         self.reports = Reports(self)
+
+    @classmethod
+    def from_oauth(
+        cls,
+        base_url: str,
+        consumer_key: str,
+        access_token: str,
+        access_token_secret: str,
+        consumer_secret: str = "",
+        **kwargs: Any,
+    ) -> SysAid:
+        """A client that signs every request with OAuth 1.0 (needs ``python-sysaid[oauth]``)."""
+        from .oauth import oauth1
+
+        client = cls(base_url, **kwargs)
+        client.session.auth = oauth1(
+            consumer_key,
+            consumer_secret,
+            resource_owner_key=access_token,
+            resource_owner_secret=access_token_secret,
+        )
+        return client
 
     def __repr__(self) -> str:
         return f"SysAid({self.api_url!r}, username={self._username!r})"
