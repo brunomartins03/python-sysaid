@@ -6,7 +6,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from datetime import datetime, timezone
 from typing import Any
 
-from .._params import quote_segment
+from .._params import encode_info, quote_segment
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
 
@@ -121,3 +121,41 @@ class ServiceRequests(Resource):
         if archive is not None:
             params["archive"] = 1 if archive else 0
         return {**params, **filters}
+
+    def create(
+        self,
+        values: Mapping[str, Any] | None = None,
+        /,
+        *,
+        type: str | None = None,
+        template: int | str | None = None,
+        view: str | None = None,
+        return_fields: Sequence[str] | None = None,
+        **fields: Any,
+    ) -> Record:
+        """Create an SR from field values, given as keywords and/or a mapping.
+
+        Use the mapping for field ids that clash with this method's own keywords
+        (e.g. the SR field ``type``). ``type`` and ``template`` select the SR type and
+        template; ``view`` and ``return_fields`` shape the returned record.
+        """
+        body = {"info": encode_info({**(values or {}), **fields})}
+        params = query(view=view, fields=return_fields, type=type, template=template)
+        return Record(self._client.request("POST", "/sr", params=params, json=body))
+
+    def update(
+        self, sr_id: int | str, values: Mapping[str, Any] | None = None, /, **fields: Any
+    ) -> None:
+        """Update the given fields only. Datetimes become ms-epoch UTC."""
+        body = {"id": str(sr_id), "info": encode_info({**(values or {}), **fields})}
+        self._client.request("PUT", f"/sr/{quote_segment(sr_id)}", json=body)
+
+    def close(self, sr_id: int | str, solution: str | None = None) -> None:
+        """Set the SR to the default *Close* status."""
+        body = None if solution is None else {"solution": solution}
+        self._client.request("PUT", f"/sr/{quote_segment(sr_id)}/close", json=body)
+
+    def delete(self, ids: int | str | Sequence[int | str]) -> None:
+        """Delete one or more SRs."""
+        id_list = [ids] if isinstance(ids, (int, str)) else ids
+        self._client.request("DELETE", "/sr", params={"ids": id_list})
