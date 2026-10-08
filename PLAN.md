@@ -3,7 +3,31 @@
 A Python wrapper for the SysAid REST API (`/api/v1`), to be published on PyPI.
 Endpoint reference: [ANOTATIONS.md](ANOTATIONS.md) (61 endpoints, 12 resource areas, SysAid 15.4+).
 
-Status: **plan only — no code written yet.**
+Status: **phases 0–8 implemented (PRs open, merge in order); phases 9–10 pending.**
+
+| Phase | State | PR |
+|---|---|---|
+| 0 Scaffolding | Done | #1 |
+| 1 Core client | Done | #2 |
+| 2 Users, filters, lists | Done | #3 |
+| 3 Service requests | Done | #4 |
+| 4 Action items, assets | Done | #5 |
+| 5 CIs | Done | #6 |
+| 6 Add-ons, RB, password services, reports | Done | #7 |
+| 7 OAuth 1.0 | Done (unverified without a consumer key) | #8 |
+| 8 Documentation | Done | #9 |
+| 9 Live validation | **Pending** — needs the homologation instance | — |
+| 10 Release | **Pending** — after phase 9 | — |
+
+**Pending before 0.1.0**
+- The mocked unit suite (95 tests) is written but has **never been executed**; the gate so far
+  is compile + lint + type-check + `pytest --collect-only` + build. Run it first (Phase 9, step 1).
+- Run read-only, then destructive, integration tests against homologation; settle every row of
+  the doc-gap table (§5) and replace doc-sample fixtures with sanitized real payloads.
+- Enable the disabled `test` job in `.github/workflows/ci.yml`.
+- Confirm the MIT license and copyright holder (A8) and the PyPI name `python-sysaid` (A1).
+- Decide whether OAuth (Phase 7) ships in 0.1.0.
+- Release: `release.yml` with Trusted Publishing, TestPyPI dry run, tag `v0.1.0`.
 
 ---
 
