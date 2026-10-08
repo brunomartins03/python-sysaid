@@ -10,6 +10,8 @@ from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
 
 
 class Assets(Resource):
+    """Read-only access to assets."""
+
     def list(
         self,
         *,
@@ -31,11 +33,13 @@ class Assets(Resource):
         fields: Sequence[str] | None = None,
         page_size: int = DEFAULT_PAGE_SIZE,
     ) -> Iterator[Record]:
+        """Every asset, fetching pages transparently."""
         return self._iter("/asset", query(view=view, fields=fields, type=type), page_size=page_size)
 
     def get(
         self, asset_id: str, *, view: str | None = None, fields: Sequence[str] | None = None
     ) -> Record:
+        """One asset; ``view`` is an Asset Form view."""
         return self._get(f"/asset/{quote_segment(asset_id)}", query(view=view, fields=fields))
 
     def search(
@@ -47,5 +51,6 @@ class Assets(Resource):
         offset: int | None = None,
         limit: int | None = None,
     ) -> RecordList:
+        """Search assets by free text."""
         params = query(view=view, fields=fields, query=text, offset=offset, limit=limit)
         return self._list("/asset/search", params)

@@ -13,6 +13,8 @@ MAX_PHOTO_BYTES = 500 * 1024
 
 
 class Users(Resource):
+    """Users and their photos and permissions."""
+
     def list(
         self,
         *,
@@ -40,6 +42,7 @@ class Users(Resource):
     def get(
         self, user_id: int | str, *, view: str | None = None, fields: Sequence[str] | None = None
     ) -> Record:
+        """One user."""
         return self._get(f"/users/{quote_segment(user_id)}", query(view=view, fields=fields))
 
     def search(
@@ -54,6 +57,7 @@ class Users(Resource):
         sort: str | None = None,
         direction: str | None = None,
     ) -> RecordList:
+        """Search users by free text."""
         params = query(
             view=view,
             fields=fields,

@@ -19,6 +19,7 @@ class PasswordServices(Resource):
         return result
 
     def permissions(self) -> JSONDict:
+        """Which self-service features are enabled."""
         result: JSONDict = self._client.request("GET", "/ps/permission", auth=False)
         return result
 

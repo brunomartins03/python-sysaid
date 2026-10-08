@@ -42,6 +42,8 @@ def read_upload(file: bytes | str | PathLike[str], filename: str | None) -> tupl
 
 
 class Resource:
+    """Base class: holds the client and the shared GET/list/paginate helpers."""
+
     def __init__(self, client: SysAid) -> None:
         self._client = client
 

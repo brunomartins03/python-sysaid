@@ -22,6 +22,8 @@ def _relations_body(relations: Iterable[Relation]) -> list[dict[str, Any]]:
 
 
 class CIs(Resource):
+    """Configuration items and their relations."""
+
     def list(
         self,
         *,
@@ -35,6 +37,7 @@ class CIs(Resource):
         support_barcode: bool | None = None,
         **filters: Any,
     ) -> RecordList:
+        """One page of CIs. Extra keyword arguments are filters."""
         params = query(
             view=view,
             fields=fields,
@@ -60,6 +63,7 @@ class CIs(Resource):
         page_size: int = DEFAULT_PAGE_SIZE,
         **filters: Any,
     ) -> Iterator[Record]:
+        """Every matching CI, fetching pages transparently."""
         params = query(
             view=view,
             fields=fields,
@@ -79,6 +83,7 @@ class CIs(Resource):
         self._client.request("PUT", f"/ci/{quote_segment(ci_id)}", json=body)
 
     def types(self, *, support_barcode: bool | None = None) -> JSONList:
+        """CI types."""
         result: JSONList = self._client.request(
             "GET", "/ci/type", params={"supportBarcode": support_barcode}
         )
@@ -91,10 +96,12 @@ class CIs(Resource):
         )
 
     def relation_types(self) -> JSONList:
+        """Available relation types."""
         result: JSONList = self._client.request("GET", "/ci/relationtypes")
         return result
 
     def relations(self, ci_id: int | str) -> JSONList:
+        """Relations whose source is the given CI."""
         result: JSONList = self._client.request("GET", f"/ci/{quote_segment(ci_id)}/relation")
         return result
 

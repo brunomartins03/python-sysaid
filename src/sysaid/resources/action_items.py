@@ -30,6 +30,8 @@ def _filter_params(
 
 
 class ActionItems(Resource):
+    """Action items attached to service requests."""
+
     def list(
         self,
         *,
@@ -73,6 +75,7 @@ class ActionItems(Resource):
         page_size: int = DEFAULT_PAGE_SIZE,
         **filters: Any,
     ) -> Iterator[Record]:
+        """Every matching action item, fetching pages transparently."""
         params = query(
             view=view,
             fields=fields,
@@ -92,19 +95,24 @@ class ActionItems(Resource):
         text: str | None = None,
         **filters: Any,
     ) -> int:
+        """Number of action items matching the filters."""
         params = _filter_params(type, ids, archive, static_filter_id, text, filters)
         return int(self._client.request("GET", "/action_item/count", params=params)["count"])
 
     def approve(self, action_item_id: int | str) -> None:
+        """Approve the action item."""
         self._change_state(action_item_id, "approve")
 
     def reject(self, action_item_id: int | str) -> None:
+        """Reject the action item."""
         self._change_state(action_item_id, "reject")
 
     def complete(self, action_item_id: int | str) -> None:
+        """Mark the action item as complete."""
         self._change_state(action_item_id, "complete")
 
     def reopen(self, action_item_id: int | str) -> None:
+        """Reopen the action item."""
         self._change_state(action_item_id, "reopen")
 
     def _change_state(self, action_item_id: int | str, action: str) -> None:

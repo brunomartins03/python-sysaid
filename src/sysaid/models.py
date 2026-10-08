@@ -30,6 +30,7 @@ class Field:
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> Field:
+        """Build from one ``info`` entry (accepts both caption spellings)."""
         # Assets use snake_case captions, everything else camelCase.
         return cls(
             key=str(data["key"]),
@@ -54,6 +55,7 @@ class Record(Mapping[str, Any]):
 
     @property
     def id(self) -> str | None:
+        """The record id as a string, if present."""
         value = self.raw.get("id")
         return None if value is None else str(value)
 
