@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "python-sysaid"
+dynamic = ["version"]
+description = "Python wrapper for the SysAid REST API"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["sysaid", "api", "itsm", "rest"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+]
+dependencies = ["requests>=2.31"]
+
+[project.optional-dependencies]
+oauth = ["requests-oauthlib>=1.3"]
+dev = [
+    "build",
+    "mypy",
+    "pytest",
+    "requests-oauthlib>=1.3",
+    "responses",
+    "ruff",
+    "twine",
+    "types-requests",
+]
+
+[tool.hatch.version]
+path = "src/sysaid/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sysaid"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+extend-exclude = ["*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: live tests against a SysAid instance (needs SYSAID_* env vars)",
+    "destructive: live tests that write data (also needs SYSAID_ALLOW_WRITES=1)",
+]
