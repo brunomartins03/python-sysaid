@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Iterator, Mapping, Sequence
 from datetime import datetime, timezone
+from os import PathLike
 from typing import Any
 
-from .._params import encode_info, quote_segment
+from .._params import encode_info, encode_value, quote_segment
 from ..models import Record
-from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
+from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query, read_upload
 
 SrType = str | Sequence[str]
 
@@ -159,3 +161,88 @@ class ServiceRequests(Resource):
         """Delete one or more SRs."""
         id_list = [ids] if isinstance(ids, (int, str)) else ids
         self._client.request("DELETE", "/sr", params={"ids": id_list})
+
+    def add_link(self, sr_id: int | str, name: str, link: str) -> None:
+        self._client.request(
+            "POST", f"/sr/{quote_segment(sr_id)}/link", json={"name": name, "link": link}
+        )
+
+    def delete_link(self, sr_id: int | str, name: str) -> None:
+        self._client.request("DELETE", f"/sr/{quote_segment(sr_id)}/link", json={"name": name})
+
+    def add_attachment(
+        self, sr_id: int | str, file: bytes | str | PathLike[str], filename: str | None = None
+    ) -> None:
+        """Attach a file, given as bytes or a path (multipart part ``file``)."""
+        name, content = read_upload(file, filename)
+        self._client.request(
+            "POST", f"/sr/{quote_segment(sr_id)}/attachment", files={"file": (name, content)}
+        )
+
+    def delete_attachment(self, sr_id: int | str, file_id: str) -> None:
+        self._client.request(
+            "DELETE", f"/sr/{quote_segment(sr_id)}/attachment", json={"fileId": file_id}
+        )
+
+    def add_activity(
+        self,
+        sr_id: int | str,
+        user_id: str,
+        from_time: datetime | int,
+        to_time: datetime | int,
+        description: str,
+    ) -> None:
+        """Log an activity; times are datetimes or ms-epoch integers."""
+        body = {
+            "userId": user_id,
+            "fromTime": from_time,
+            "toTime": to_time,
+            "description": description,
+        }
+        self._client.request("POST", f"/sr/{quote_segment(sr_id)}/activity", json=body)
+
+    def delete_activity(self, sr_id: int | str, activity_id: int) -> None:
+        self._client.request(
+            "DELETE", f"/sr/{quote_segment(sr_id)}/activity", json={"id": activity_id}
+        )
+
+    def send_message(
+        self,
+        sr_id: int | str,
+        to_users: str | Sequence[int | str],
+        *,
+        from_user_id: int | str,
+        subject: str | None = None,
+        body: str | None = None,
+        cc_users: str | Sequence[int | str] | None = None,
+        method: str | None = None,
+        add_attachment_to_sr: bool | None = None,
+        add_sr_details: bool | None = None,
+        attachments: Sequence[bytes | str | PathLike[str]] = (),
+    ) -> None:
+        """Send a message from the SR.
+
+        Recipients are user ids; a group id goes in brackets, e.g. ``"[3]"``. ``method`` is
+        ``email`` (default), ``sms``, ``broadcast`` or ``im``.
+        """
+        message = {
+            "fromUserId": str(from_user_id),
+            "toUsers": encode_value(to_users),
+            "ccUsers": None if cc_users is None else encode_value(cc_users),
+            "msgSubject": subject,
+            "msgBody": body,
+        }
+        parts: list[tuple[str, tuple[str | None, Any]]] = [
+            ("message", (None, json.dumps({k: v for k, v in message.items() if v is not None})))
+        ]
+        parts += [("file", read_upload(attachment, None)) for attachment in attachments]
+        self._client.request(
+            "POST",
+            f"/sr/{quote_segment(sr_id)}/message",
+            params={
+                "method": method,
+                "addAttachmentToSr": add_attachment_to_sr,
+                "addSrDetails": add_sr_details,
+            },
+            files=parts,
+        )
