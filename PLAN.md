@@ -262,9 +262,13 @@ Other behaviour seen: `notes` is written as objects and read back as formatted s
 unknown list values (e.g. a status id that does not exist) are ignored silently with HTTP 200;
 `priority` is recomputed from `urgency`/`impact`.
 
-### 5.3 Not verified end to end
+### 5.3 Not verified end to end (disabled)
 
-The API account lacks the permissions, or the instance lacks the data:
+The API account lacks the permissions, or the instance lacks the data. Every call of the
+resources below is **disabled**: it raises `UnverifiedFeatureError` until it is verified and
+its `@unverified` decorator removed. That includes the parts that did work (action-item
+count, add-on list and refresh, password-service domains and permissions), so that no
+resource is half available.
 
 | Area | Reason | What was checked |
 |---|---|---|

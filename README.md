@@ -65,7 +65,6 @@ Filter ids come from `client.filters`. Pass them as keyword arguments:
 ```python
 client.service_requests.list(status=[4, 5], request_user=235)   # status=4,5&request_user=235
 client.service_requests.list(archive=True)                      # archive=1
-client.cis.list(support_barcode=True)                           # supportBarcode=true
 ```
 
 Use `view=` and `fields=` to choose the returned fields, and `sort=`/`direction=`.
@@ -112,14 +111,24 @@ accepts for field values. `add_activity` takes the numeric id of the user.
 |---|---|
 | `client.users` | list, iter, get, search, photo get/upload, permissions |
 | `client.filters` / `client.lists` | filter definitions, dropdown id/caption pairs |
-| `client.service_requests` | list, iter, get, search, count, template, create, update, close, delete, links, attachments, activities, `send_message` |
+| `client.service_requests` | list, iter, get, search, count, template, create, update, close, links, attachments, activities, `send_message` |
+| `client.resource_bundle` | translate |
+
+### Disabled features
+
+These are implemented from the REST guide but have not been verified against a live server
+yet, so calling them raises `UnverifiedFeatureError` before any request is made:
+
+| Attribute | Disabled calls |
+|---|---|
+| `client.service_requests` | delete |
 | `client.action_items` | list, iter, count, approve, reject, complete, reopen |
 | `client.assets` | list, iter, get, search |
 | `client.cis` | list, iter, update, types, view_fields, relation types, relations |
 | `client.addons` | list, get, update, test_connection, refresh |
-| `client.resource_bundle` | translate |
-| `client.password_services` | domains, permissions, questions, unlock, reset, update_password (no login needed) |
-| `client.reports` | operators, run_preview (raw JSON) |
+| `client.password_services` | domains, permissions, questions, unlock, reset, update_password |
+| `client.reports` | operators, run_preview |
+| OAuth 1.0 | `SysAid.from_oauth` and the `sysaid.oauth` helpers |
 
 ## Errors
 
@@ -140,7 +149,8 @@ except NotFoundError as exc:
 
 ## OAuth 1.0
 
-Needs `python-sysaid[oauth]` and a consumer key issued by SysAid:
+Disabled until verified (see [Disabled features](#disabled-features)). The intended flow
+needs `python-sysaid[oauth]` and a consumer key issued by SysAid:
 
 ```python
 from sysaid import SysAid, oauth
