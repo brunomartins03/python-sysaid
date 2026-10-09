@@ -23,8 +23,8 @@ def test_create(client: SysAid) -> None:
             json_params_matcher(
                 {
                     "info": [
-                        {"key": "due_date", "value": T_MS},
                         {"key": "status", "value": 2},
+                        {"key": "due_date", "value": T_MS},
                         {"key": "problem_type", "value": "A_B_C"},
                     ]
                 }
