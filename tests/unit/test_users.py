@@ -96,9 +96,7 @@ def test_upload_photo_over_limit_is_rejected_client_side(client: SysAid) -> None
 def test_permissions(client: SysAid) -> None:
     body = {"id": "1", "permissions": [{"key": "userPermissionUserSelfService", "value": "false"}]}
     responses.get(API + "/users/1/permission", json=body)
-    responses.get(
-        API + "/users/1/permission/userPermissionUserSelfService",
-        json={"key": "userPermissionUserSelfService", "value": "false"},
-    )
     assert client.users.permissions(1) == body
     assert client.users.permission(1, "userPermissionUserSelfService")["value"] == "false"
+    with pytest.raises(KeyError):
+        client.users.permission(1, "missing")

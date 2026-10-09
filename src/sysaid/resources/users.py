@@ -96,8 +96,13 @@ class Users(Resource):
         return result
 
     def permission(self, user_id: int | str, permission_id: str) -> JSONDict:
-        """``{key, value}`` for one permission."""
-        result: JSONDict = self._client.request(
-            "GET", f"/users/{quote_segment(user_id)}/permission/{quote_segment(permission_id)}"
-        )
-        return result
+        """``{key, value}`` for one permission; ``KeyError`` if the user has no such key.
+
+        Read from :meth:`permissions`: the single-permission endpoint in the REST guide
+        answers 404 on SysAid 24.4.
+        """
+        for item in self.permissions(user_id)["permissions"]:
+            if item["key"] == permission_id:
+                result: JSONDict = item
+                return result
+        raise KeyError(permission_id)
