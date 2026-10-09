@@ -221,7 +221,7 @@ Branch: `chore/release-0.1.0`
 ## 5. Live validation results (Phase 9)
 
 Run against the homologation instance (SysAid **v24.4.60**) with the unit suite (97 tests)
-and `tests/integration/` (27 tests: 21 passed, 5 skipped for permissions, 1 expected failure).
+and `tests/integration/` (27 tests: 22 passed, 4 skipped for permissions, 1 expected failure).
 
 ### 5.1 Bugs found and fixed
 
@@ -253,6 +253,11 @@ and `tests/integration/` (27 tests: 21 passed, 5 skipped for permissions, 1 expe
 | 16. Asset caption keys | Unverified (no inventory permission) |
 | 17. Default `limit` | `iter()` always sends `limit`; paging confirmed on users and SRs |
 
+`send_message` was verified later, once the API user had an e-mail address: to/cc, subject,
+body, attachments and the `method`, `addAttachmentToSr` and `addSrDetails` parameters are
+accepted and the message is recorded on the SR. Only `email` was sent, and only to the API
+user itself; delivery to the mailbox was not checked.
+
 Other behaviour seen: `notes` is written as objects and read back as formatted strings;
 unknown list values (e.g. a status id that does not exist) are ignored silently with HTTP 200;
 `priority` is recomputed from `urgency`/`impact`.
@@ -269,7 +274,6 @@ The API account lacks the permissions, or the instance lacks the data:
 | Reports (operators, run preview) | 403 | Routes exist |
 | Action items list and state changes | `GET /action_item` answers HTTP 500 while the count is 0 | Count works |
 | Password services questions, unlock, reset, update password | Module disabled (HTTP 500 with a message) | Domains and permissions work |
-| `send_message` | The API user has no e-mail address; no real user was mailed | Multipart body is accepted up to the recipient check |
 | SR delete | 401, no purge permission | Request reaches the permission check |
 | OAuth 1.0 | No consumer key | The three endpoints exist |
 
