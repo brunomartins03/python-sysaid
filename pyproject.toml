@@ -40,6 +40,9 @@ dev = [
 [tool.hatch.version]
 path = "src/sysaid/__init__.py"
 
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "CHANGELOG.md"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/sysaid"]
 
