@@ -76,6 +76,14 @@ def test_errors_are_mapped(client: SysAid, status: int, exc: type[SysAidHTTPErro
 
 
 @responses.activate
+def test_error_message_skips_html_pages(client: SysAid) -> None:
+    responses.get(API + "/sr", status=404, body="<html>Not Found</html>", content_type="text/html")
+    with pytest.raises(NotFoundError) as info:
+        client.request("GET", "/sr")
+    assert info.value.message == "Not Found"
+
+
+@responses.activate
 def test_error_message_falls_back_to_text(client: SysAid) -> None:
     responses.get(API + "/sr", status=500, body="plain failure")
     with pytest.raises(ServerError, match="plain failure"):
