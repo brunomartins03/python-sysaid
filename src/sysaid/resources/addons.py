@@ -1,4 +1,4 @@
-"""Add-ons: ``/addons`` (list, get, refresh) and ``/addon`` (update, test)."""
+"""Add-ons: ``/addons``."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ class Addons(Resource):
         Only these are updated server-side. The server answers with a message.
         """
         return self._client.request(
-            "PUT", f"/addon/{quote_segment(name)}", json=_payload(name, active, params)
+            "PUT", f"/addons/{quote_segment(name)}", json=_payload(name, active, params)
         )
 
     def test_connection(
@@ -48,7 +48,7 @@ class Addons(Resource):
         """Same payload as :meth:`update`, but only tests; nothing is saved."""
         return self._client.request(
             "PUT",
-            f"/addon/{quote_segment(name)}/testConnection",
+            f"/addons/{quote_segment(name)}/testConnection",
             json=_payload(name, active, params),
         )
 
