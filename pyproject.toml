@@ -64,3 +64,8 @@ markers = [
     "integration: live tests against a SysAid instance (needs SYSAID_* env vars)",
     "destructive: live tests that write data (also needs SYSAID_ALLOW_WRITES=1)",
 ]
+
+[project.urls]
+Source = "https://www.github.com/brunomartins03/python-sysaid"
+Changelog = "https://github.com/brunomartins03/python-sysaid/blob/main/CHANGELOG.md"
+Issues = "https://github.com/brunomartins03/python-sysaid/issues"
