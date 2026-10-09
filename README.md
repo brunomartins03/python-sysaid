@@ -166,8 +166,7 @@ client = SysAid.from_oauth(url, consumer_key, access["oauth_token"], access["oau
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The endpoint reference is in
-[ANOTATIONS.md](ANOTATIONS.md) and the roadmap in [PLAN.md](PLAN.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
