@@ -19,7 +19,7 @@ def test_operators(client: SysAid) -> None:
 def test_run_preview_passes_body_and_returns_raw(client: SysAid) -> None:
     definition = {"entity": "sr", "select": {"reportSelect": []}}
     responses.post(
-        API + "/reports/allReports/72/runPreview",
+        API + "/reports/72/runPreview",
         json={"rows": []},
         match=[json_params_matcher(definition)],
     )

@@ -23,5 +23,5 @@ class Reports(Resource):
         ``definition`` is the report body (``entity``, ``select``, ``filter``, ``layout``).
         """
         return self._client.request(
-            "POST", f"/reports/allReports/{quote_segment(report_id)}/runPreview", json=definition
+            "POST", f"/reports/{quote_segment(report_id)}/runPreview", json=definition
         )
