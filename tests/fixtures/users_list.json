@@ -1,0 +1,12 @@
+[
+  {"id": "1", "name": "ILIENT\\Johnny",
+   "isAdmin": true, "isSysAidAdmin": false, "isManager": false, "isGuest": false,
+   "info": [
+     {"key": "display_name", "value": "John Doe", "valueClass": "",
+      "keyCaption": "Display Name", "valueCaption": "John Doe"},
+     {"key": "email_address", "value": "john@example.com", "valueClass": "",
+      "keyCaption": "Email", "valueCaption": "john@example.com"},
+     {"key": "cust_list1", "value": "0", "valueClass": "",
+      "keyCaption": "User Custom List 1", "valueCaption": ""}
+   ]}
+]

@@ -1,0 +1,5 @@
+[
+  {"id": "status", "type": "list", "caption": "Status",
+   "values": [{"id": "${list.active}", "caption": "Active"}, {"id": "${list.all}", "caption": "All"}],
+   "metadata": {"offset": 0, "limit": 20, "total": 2}}
+]
