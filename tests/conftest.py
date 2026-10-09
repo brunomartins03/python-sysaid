@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from sysaid import SysAid
+from sysaid import SysAid, _unverified
 
 INTEGRATION_ENV = ("SYSAID_URL", "SYSAID_USERNAME", "SYSAID_PASSWORD")
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -22,6 +22,12 @@ def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item
             item.add_marker(skip_live)
         if os.environ.get("SYSAID_ALLOW_WRITES") != "1" and "destructive" in item.keywords:
             item.add_marker(skip_writes)
+
+
+@pytest.fixture(autouse=True)
+def enable_unverified(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep the tests exercising the features that are disabled for library users."""
+    monkeypatch.setattr(_unverified, "DISABLED", False)
 
 
 @pytest.fixture

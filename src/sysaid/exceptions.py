@@ -16,6 +16,10 @@ class AuthenticationError(SysAidError):
     """Login failed, or credentials are missing."""
 
 
+class UnverifiedFeatureError(SysAidError):
+    """The feature is disabled until it has been verified against a live server."""
+
+
 class SysAidHTTPError(SysAidError):
     """The server answered with a non-2xx status."""
 
