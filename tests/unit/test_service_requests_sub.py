@@ -43,7 +43,7 @@ def test_activities(client: SysAid) -> None:
         match=[
             json_params_matcher(
                 {
-                    "userId": "sysaid",
+                    "userId": 66,
                     "fromTime": 1378501200000,
                     "toTime": 1378846800000,
                     "description": "work",
@@ -52,7 +52,7 @@ def test_activities(client: SysAid) -> None:
         ],
     )
     responses.delete(API + "/sr/6/activity", match=[json_params_matcher({"id": 2})])
-    client.service_requests.add_activity(6, "sysaid", start, 1378846800000, "work")
+    client.service_requests.add_activity(6, 66, start, 1378846800000, "work")
     client.service_requests.delete_activity(6, 2)
 
 

@@ -193,12 +193,15 @@ class ServiceRequests(Resource):
     def add_activity(
         self,
         sr_id: int | str,
-        user_id: str,
+        user_id: int | str,
         from_time: datetime | int,
         to_time: datetime | int,
         description: str,
     ) -> None:
-        """Log an activity; times are datetimes or ms-epoch integers."""
+        """Log an activity for the user with the given numeric id.
+
+        Times are datetimes or ms-epoch integers.
+        """
         body = {
             "userId": user_id,
             "fromTime": from_time,
