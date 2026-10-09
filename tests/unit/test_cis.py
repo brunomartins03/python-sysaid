@@ -41,7 +41,7 @@ def test_update(client: SysAid) -> None:
             json_params_matcher(
                 {
                     "id": "273",
-                    "info": [{"key": "status", "value": 2}, {"key": "owner", "value": "s"}],
+                    "info": [{"key": "status", "value": "2"}, {"key": "owner", "value": "s"}],
                 }
             )
         ],

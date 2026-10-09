@@ -58,8 +58,21 @@ def encode_json(value: Any) -> Any:
 
 
 def encode_info(fields: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Build the ``info`` array of ``{key, value}`` objects used by write calls."""
-    return [{"key": key, "value": encode_json(value)} for key, value in fields.items()]
+    """Build the ``info`` array of ``{key, value}`` objects used by write calls.
+
+    The server only accepts scalar values as strings (a JSON number is answered with
+    HTTP 500), so numbers, booleans and datetimes are sent as text. Structured values
+    such as ``notes`` keep their JSON shape.
+    """
+    return [
+        {
+            "key": key,
+            "value": encode_value(value)
+            if isinstance(value, (int, float, datetime))
+            else encode_json(value),
+        }
+        for key, value in fields.items()
+    ]
 
 
 def quote_segment(value: object) -> str:
