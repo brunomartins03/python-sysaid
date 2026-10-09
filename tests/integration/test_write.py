@@ -90,10 +90,24 @@ def test_send_message_to_self(live: SysAid, sr: Record, me: str) -> None:
     assert sr.id is not None
     try:
         live.service_requests.send_message(
-            sr.id, [me], from_user_id=me, subject="python-sysaid", body="test", add_sr_details=False
+            sr.id,
+            [me],
+            from_user_id=me,
+            cc_users=[me],
+            subject="python-sysaid",
+            body="test",
+            add_sr_details=False,
+            attachments=[b"attached\n"],
         )
     except BadRequestError as exc:
         pytest.skip(f"the logged-in user cannot receive mail: {exc}")
+    after = read(live, sr, "messages", "attachments")
+    message = after["messages"][-1]
+    assert "python-sysaid" in message["msgSubject"]
+    assert message["msgBody"].startswith("test")
+    assert message["method"] == "email"
+    assert message["ccUsers"]
+    assert len(after["attachments"]) == 1
 
 
 def test_close(live: SysAid, sr: Record) -> None:
