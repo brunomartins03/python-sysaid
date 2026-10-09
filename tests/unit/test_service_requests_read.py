@@ -45,7 +45,7 @@ def test_list_encodes_filters(client: SysAid, load_fixture: Any) -> None:
     assert srs[0].id == "5433"
     assert srs[0]["title"] == "basic Service Request"
     assert srs[0].caption("request_user") == "Leonardo Gonzalez"
-    assert srs[0].raw["canUpdate"] == "true"
+    assert srs[0].raw["canUpdate"] is True
 
 
 @responses.activate

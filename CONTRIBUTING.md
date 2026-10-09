@@ -25,6 +25,13 @@ python -m build && twine check dist/*
   in `tests/fixtures/`.
 - Docstrings are Google style.
 
+## Unverified features
+
+Calls decorated with `@unverified` (`src/sysaid/_unverified.py`) raise
+`UnverifiedFeatureError` for library users. The test suite switches that off, so their unit
+and integration tests still run. To enable a call, verify it with a live test and remove
+the decorator, its entry in `tests/unit/test_unverified.py` and its README row.
+
 ## Integration tests
 
 Live tests are marked `integration` and skipped unless these variables are set:

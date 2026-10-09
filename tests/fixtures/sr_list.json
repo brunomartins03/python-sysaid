@@ -1,8 +1,13 @@
 [
-  {"id": "5433", "canUpdate": "true", "canDelete": "false", "canArchive": "false",
+  {"id": "5433", "canUpdate": true, "canDelete": false, "canArchive": false, "hasChildren": false,
    "info": [
-     {"key": "title", "keyCaption": "Title", "value": "basic Service Request", "valueCaption": "basic Service Request"},
-     {"key": "insert_time", "keyCaption": "Request Time", "value": "1397564800000", "valueCaption": "2014-04-01 11:46:48"},
-     {"key": "request_user", "keyCaption": "Request User", "value": "leo@law.com", "valueCaption": "Leonardo Gonzalez"}
+     {"key": "title", "value": "basic Service Request", "valueClass": "",
+      "keyCaption": "Title", "valueCaption": "basic Service Request"},
+     {"key": "insert_time", "value": 1397564800000, "valueClass": "",
+      "keyCaption": "Request Time", "valueCaption": "15-04-2014 12:26:40"},
+     {"key": "status", "value": 1, "valueClass": 0,
+      "keyCaption": "Status", "valueCaption": "New"},
+     {"key": "request_user", "value": 124, "valueClass": "",
+      "keyCaption": "Request User", "valueCaption": "Leonardo Gonzalez"}
    ]}
 ]

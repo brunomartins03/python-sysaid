@@ -22,9 +22,9 @@ def test_update_and_test_use_singular(client: SysAid) -> None:
         "active": True,
         "params": [{"name": "bomgar_url", "value": "https://sysaid.bomgar.com"}],
     }
-    responses.put(API + "/addon/bomgar", body="Saved", match=[json_params_matcher(body)])
+    responses.put(API + "/addons/bomgar", body="Saved", match=[json_params_matcher(body)])
     responses.put(
-        API + "/addon/bomgar/testConnection", body="Connected", match=[json_params_matcher(body)]
+        API + "/addons/bomgar/testConnection", body="Connected", match=[json_params_matcher(body)]
     )
     params = {"bomgar_url": "https://sysaid.bomgar.com"}
     assert client.addons.update("bomgar", active=True, params=params) == "Saved"
@@ -33,5 +33,5 @@ def test_update_and_test_use_singular(client: SysAid) -> None:
 
 @responses.activate
 def test_update_only_sends_given_keys(client: SysAid) -> None:
-    responses.put(API + "/addon/x", match=[json_params_matcher({"name": "x", "active": False})])
+    responses.put(API + "/addons/x", match=[json_params_matcher({"name": "x", "active": False})])
     client.addons.update("x", active=False)

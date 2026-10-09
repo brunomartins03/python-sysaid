@@ -3,7 +3,7 @@
 A Python wrapper for the SysAid REST API (`/api/v1`), to be published on PyPI.
 Endpoint reference: [ANOTATIONS.md](ANOTATIONS.md) (61 endpoints, 12 resource areas, SysAid 15.4+).
 
-Status: **phases 0–8 implemented (PRs open, merge in order); phases 9–10 pending.**
+Status: **phases 0–9 done; phase 10 (release) pending.** Live results: [§5](#5-live-validation-results-phase-9).
 
 | Phase | State | PR |
 |---|---|---|
@@ -16,15 +16,12 @@ Status: **phases 0–8 implemented (PRs open, merge in order); phases 9–10 pen
 | 6 Add-ons, RB, password services, reports | Done | #7 |
 | 7 OAuth 1.0 | Done (unverified without a consumer key) | #8 |
 | 8 Documentation | Done | #9 |
-| 9 Live validation | **Pending** — needs the homologation instance | — |
+| 9 Live validation | Done against SysAid v24.4.60 (partial coverage, see §5) | — |
 | 10 Release | **Pending** — after phase 9 | — |
 
 **Pending before 0.1.0**
-- The mocked unit suite (95 tests) is written but has **never been executed**; the gate so far
-  is compile + lint + type-check + `pytest --collect-only` + build. Run it first (Phase 9, step 1).
-- Run read-only, then destructive, integration tests against homologation; settle every row of
-  the doc-gap table (§5) and replace doc-sample fixtures with sanitized real payloads.
-- Enable the disabled `test` job in `.github/workflows/ci.yml`.
+- Re-run the live suite with an account that can see inventory, CMDB, reports and add-on
+  parameters, on an instance with action items and Password Services enabled (§5.3).
 - Confirm the MIT license and copyright holder (A8) and the PyPI name `python-sysaid` (A1).
 - Decide whether OAuth (Phase 7) ships in 0.1.0.
 - Release: `release.yml` with Trusted Publishing, TestPyPI dry run, tag `v0.1.0`.
@@ -221,32 +218,74 @@ Branch: `chore/release-0.1.0`
 
 ---
 
-## 5. Doc gaps to settle in Phase 9
+## 5. Live validation results (Phase 9)
 
-Coded with the "initial assumption" so each one is a one-line change if the server disagrees.
+Run against the homologation instance (SysAid **v24.4.60**) with the unit suite (97 tests)
+and `tests/integration/` (27 tests: 22 passed, 4 skipped for permissions, 1 expected failure).
 
-| Gap (ANOTATIONS §17) | Initial assumption |
+### 5.1 Bugs found and fixed
+
+| Finding | Fix |
 |---|---|
-| 1. Login body format | JSON body |
-| 4. Photo download | `GET /users/{id}/photo` returns raw bytes |
-| 5. CI relations path | `/ci/{id}/relation` |
-| 6. Add-ons path | Plural for list/get/refresh, singular for update/test |
-| 7. CI types param | `supportBarcode` |
-| 8. `/ci/barcode` | Not implemented until confirmed |
-| 9. `GET /asset` `type` param | Passed through if given |
-| 11. Attachment part name | `file` |
-| 12. Action-item state changes | Empty body |
-| 13. `runPreview` response | Returned as raw JSON |
-| 14. Download File / Translate Key | Not implemented (no path documented) |
-| 15. Error format | `{"status","message"}` when JSON, else response text |
-| 16. Asset caption keys | Both spellings accepted |
-| 17. Default `limit` | Client always sends an explicit `limit` when iterating |
+| `POST /sr` and `PUT /sr/{id}` answer HTTP 500 (`Integer cannot be cast to String`) for JSON numbers, including `due_date`; the guide's samples use numbers | `info` scalars (numbers, booleans, datetimes) are sent as strings |
+| Activity `userId` must be the numeric user id, not the login name shown in the guide | `add_activity` takes `int \| str`; documented |
+| `PUT /addon/{name}` and `/addon/{name}/testConnection` do not exist (404); the plural paths do | Both use `/addons/...` |
+| `POST /reports/allReports/{id}/runPreview` does not exist (404); `/reports/{id}/runPreview` does | Path changed |
+| `GET /users/{id}/permission/{permissionId}` does not exist (404) | `users.permission()` reads from the permissions list |
+| Unrouted or filtered requests return Tomcat HTML pages, which ended up as the error message | The reason phrase is used for HTML bodies |
+
+### 5.2 Doc gaps
+
+| Gap (ANOTATIONS §17) | Outcome |
+|---|---|
+| 1. Login body format | **Confirmed**: JSON body. No top-level `user_id`; it is read from `user.id` |
+| 4. Photo download | **Confirmed**: raw bytes (`application/octet-stream`); 204 with no body when there is no photo |
+| 5. CI relations path | Route `/ci/{id}/relation` exists for GET/POST/DELETE (`/ci/{id}/relations` is 404); payloads unverified |
+| 6. Add-ons path | **Wrong in the guide**: plural everywhere (fixed) |
+| 7. CI types param | Unverified (no CMDB permission); `/ci/type` exists, `/ci/types` does not |
+| 8. `/ci/barcode` | Does not exist (404); stays unimplemented |
+| 9. `GET /asset` `type` param | Unverified (no inventory permission) |
+| 11. Attachment part name | **Confirmed**: `file` |
+| 12. Action-item state changes | Route exists and takes an empty body; unverified (no action items on the instance) |
+| 13. `runPreview` response | Unverified (403); path fixed |
+| 14. Download File / Translate Key | Still not implemented |
+| 15. Error format | **Confirmed**: `{"status","message"}` from the API; HTML pages from the servlet container. A missing SR, user or list is 400, not 404 |
+| 16. Asset caption keys | Unverified (no inventory permission) |
+| 17. Default `limit` | `iter()` always sends `limit`; paging confirmed on users and SRs |
+
+`send_message` was verified later, once the API user had an e-mail address: to/cc, subject,
+body, attachments and the `method`, `addAttachmentToSr` and `addSrDetails` parameters are
+accepted and the message is recorded on the SR. Only `email` was sent, and only to the API
+user itself; delivery to the mailbox was not checked.
+
+Other behaviour seen: `notes` is written as objects and read back as formatted strings;
+unknown list values (e.g. a status id that does not exist) are ignored silently with HTTP 200;
+`priority` is recomputed from `urgency`/`impact`.
+
+### 5.3 Not verified end to end (disabled)
+
+The API account lacks the permissions, or the instance lacks the data. Every call of the
+resources below is **disabled**: it raises `UnverifiedFeatureError` until it is verified and
+its `@unverified` decorator removed. That includes the parts that did work (action-item
+count, add-on list and refresh, password-service domains and permissions), so that no
+resource is half available.
+
+| Area | Reason | What was checked |
+|---|---|---|
+| Assets (list, get, search) | 401, no inventory permission | Routes exist |
+| CIs (all 8 calls) | 401, no CMDB permission | Routes exist |
+| Add-ons get, update, test connection | 403 | Routes exist; list and refresh work |
+| Reports (operators, run preview) | 403 | Routes exist |
+| Action items list and state changes | `GET /action_item` answers HTTP 500 while the count is 0 | Count works |
+| Password services questions, unlock, reset, update password | Module disabled (HTTP 500 with a message) | Domains and permissions work |
+| SR delete | 401, no purge permission | Request reaches the permission check |
+| OAuth 1.0 | No consumer key | The three endpoints exist |
 
 ---
 
 ## 6. Risks
 
-- **Docs vs reality.** Methods and paths come from a help index for v24.4.60; Phases 1–7 are unverified until Phase 9. Mitigation: one request path, assumptions isolated per the table above.
+- **Docs vs reality.** Methods and paths come from a help index for v24.4.60. Phase 9 verified the areas in §5; those in §5.3 still rest on the documentation.
 - **Login requires an admin with mobile-app permission.** The homologation account must have both.
 - **Destructive calls** (delete SR, send message, password reset, add-on update) are never run without `SYSAID_ALLOW_WRITES=1`, and only against homologation — never the production host named in ANOTATIONS.md.
 - **Late first test run.** Running nothing until Phase 9 means bugs accumulate. Recommendation: allow the mocked unit suite to run from Phase 1 (it needs no server).

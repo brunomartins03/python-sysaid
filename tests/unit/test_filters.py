@@ -16,7 +16,7 @@ def test_list(client: SysAid, load_fixture: Any) -> None:
     )
     filters = client.filters.list(fields=["values"], limit=20)
     assert filters[0]["id"] == "status"
-    assert filters[0]["values"][0]["caption"] == "closed"
+    assert filters[0]["values"][0]["caption"] == "Active"
 
 
 @responses.activate
@@ -26,4 +26,4 @@ def test_get(client: SysAid, load_fixture: Any) -> None:
         json=load_fixture("filters.json")[0],
         match=[query_param_matcher({"view": "SysAidMobile"})],
     )
-    assert client.filters.get("status", view="SysAidMobile")["metadata"]["total"] == "2"
+    assert client.filters.get("status", view="SysAidMobile")["metadata"]["total"] == 2

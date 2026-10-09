@@ -29,9 +29,7 @@ jobs:
       - run: python -m build
       - run: twine check dist/*
 
-  # Enabled in Phase 9, once the unit suite has been run for the first time.
   test:
-    if: false
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -23,8 +23,8 @@ def test_create(client: SysAid) -> None:
             json_params_matcher(
                 {
                     "info": [
-                        {"key": "due_date", "value": T_MS},
-                        {"key": "status", "value": 2},
+                        {"key": "status", "value": "2"},
+                        {"key": "due_date", "value": str(T_MS)},
                         {"key": "problem_type", "value": "A_B_C"},
                     ]
                 }
@@ -47,7 +47,7 @@ def test_create_with_clashing_field_id_via_mapping(client: SysAid) -> None:
     responses.post(API + "/sr", json={"id": "1", "info": []})
     client.service_requests.create({"type": 3}, type="incident")
     sent = json.loads(responses.calls[0].request.body or "{}")
-    assert sent == {"info": [{"key": "type", "value": 3}]}
+    assert sent == {"info": [{"key": "type", "value": "3"}]}
 
 
 @responses.activate
@@ -59,8 +59,8 @@ def test_update_builds_key_value_info(client: SysAid) -> None:
                 {
                     "id": "273",
                     "info": [
-                        {"key": "status", "value": 2},
-                        {"key": "responsibility", "value": 66},
+                        {"key": "status", "value": "2"},
+                        {"key": "responsibility", "value": "66"},
                         {
                             "key": "notes",
                             "value": [{"userName": "sysaid", "createDate": T_MS, "text": "Note"}],

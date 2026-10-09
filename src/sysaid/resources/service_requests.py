@@ -9,6 +9,7 @@ from os import PathLike
 from typing import Any
 
 from .._params import encode_info, encode_value, quote_segment
+from .._unverified import unverified
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query, read_upload
 
@@ -160,6 +161,7 @@ class ServiceRequests(Resource):
         body = None if solution is None else {"solution": solution}
         self._client.request("PUT", f"/sr/{quote_segment(sr_id)}/close", json=body)
 
+    @unverified
     def delete(self, ids: int | str | Sequence[int | str]) -> None:
         """Delete one or more SRs."""
         id_list = [ids] if isinstance(ids, (int, str)) else ids
@@ -193,12 +195,15 @@ class ServiceRequests(Resource):
     def add_activity(
         self,
         sr_id: int | str,
-        user_id: str,
+        user_id: int | str,
         from_time: datetime | int,
         to_time: datetime | int,
         description: str,
     ) -> None:
-        """Log an activity; times are datetimes or ms-epoch integers."""
+        """Log an activity for the user with the given numeric id.
+
+        Times are datetimes or ms-epoch integers.
+        """
         body = {
             "userId": user_id,
             "fromTime": from_time,

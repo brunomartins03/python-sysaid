@@ -6,6 +6,7 @@ from collections.abc import Iterator, Sequence
 from typing import Any
 
 from .._params import quote_segment
+from .._unverified import unverified
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
 
@@ -32,6 +33,7 @@ def _filter_params(
 class ActionItems(Resource):
     """Action items attached to service requests."""
 
+    @unverified
     def list(
         self,
         *,
@@ -60,6 +62,7 @@ class ActionItems(Resource):
         )
         return self._list("/action_item", params)
 
+    @unverified
     def iter(
         self,
         *,
@@ -85,6 +88,7 @@ class ActionItems(Resource):
         )
         return self._iter("/action_item", params, page_size=page_size)
 
+    @unverified
     def count(
         self,
         *,
@@ -99,18 +103,22 @@ class ActionItems(Resource):
         params = _filter_params(type, ids, archive, static_filter_id, text, filters)
         return int(self._client.request("GET", "/action_item/count", params=params)["count"])
 
+    @unverified
     def approve(self, action_item_id: int | str) -> None:
         """Approve the action item."""
         self._change_state(action_item_id, "approve")
 
+    @unverified
     def reject(self, action_item_id: int | str) -> None:
         """Reject the action item."""
         self._change_state(action_item_id, "reject")
 
+    @unverified
     def complete(self, action_item_id: int | str) -> None:
         """Mark the action item as complete."""
         self._change_state(action_item_id, "complete")
 
+    @unverified
     def reopen(self, action_item_id: int | str) -> None:
         """Reopen the action item."""
         self._change_state(action_item_id, "reopen")

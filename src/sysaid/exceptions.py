@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from http.client import responses
 from typing import Any
 
 import requests
@@ -13,6 +14,10 @@ class SysAidError(Exception):
 
 class AuthenticationError(SysAidError):
     """Login failed, or credentials are missing."""
+
+
+class UnverifiedFeatureError(SysAidError):
+    """The feature is disabled until it has been verified against a live server."""
 
 
 class SysAidHTTPError(SysAidError):
@@ -65,10 +70,16 @@ _BY_STATUS: dict[int, type[SysAidHTTPError]] = {
 
 
 def _message_from(response: requests.Response) -> str:
-    """Return ``message`` from a ``{"status", "message"}`` body, else the raw text."""
+    """Return ``message`` from a ``{"status", "message"}`` body, else the raw text.
+
+    Unrouted or filtered requests get the servlet container's HTML error page; for
+    those the reason phrase is used instead of the markup.
+    """
     try:
         body: Any = response.json()
     except ValueError:
+        if "html" in response.headers.get("Content-Type", ""):
+            return response.reason or responses.get(response.status_code, "")
         return response.text or response.reason or ""
     if isinstance(body, dict) and body.get("message") is not None:
         return str(body["message"])

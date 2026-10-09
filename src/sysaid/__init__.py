@@ -12,6 +12,7 @@ from .exceptions import (
     SysAidError,
     SysAidHTTPError,
     UnauthorizedError,
+    UnverifiedFeatureError,
 )
 from .models import Field, Record
 
@@ -31,5 +32,6 @@ __all__ = [
     "SysAidError",
     "SysAidHTTPError",
     "UnauthorizedError",
+    "UnverifiedFeatureError",
     "__version__",
 ]

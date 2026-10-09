@@ -34,10 +34,19 @@ def test_build_params_drops_none_and_encodes() -> None:
     assert params == {"status": "4,5", "archive": "true", "n": "0"}
 
 
+def test_encode_info_sends_scalars_as_strings() -> None:
+    fields = {"status": 2, "due_date": T, "flag": True, "title": "x"}
+    assert encode_info(fields) == [
+        {"key": "status", "value": "2"},
+        {"key": "due_date", "value": str(T_MS)},
+        {"key": "flag", "value": "true"},
+        {"key": "title", "value": "x"},
+    ]
+
+
 def test_encode_info_converts_nested_datetimes() -> None:
-    info = encode_info({"status": 2, "notes": [{"userName": "u", "createDate": T, "text": "t"}]})
+    info = encode_info({"notes": [{"userName": "u", "createDate": T, "text": "t"}]})
     assert info == [
-        {"key": "status", "value": 2},
         {"key": "notes", "value": [{"userName": "u", "createDate": T_MS, "text": "t"}]},
     ]
     assert encode_json({"d": T}) == {"d": T_MS}

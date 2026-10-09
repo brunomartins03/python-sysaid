@@ -1,4 +1,5 @@
 [
-  {"id": "priority", "caption": "Priority",
-   "values": [{"id": "1", "caption": "Highest"}, {"id": "2", "caption": "High"}]}
+  {"id": "ci_cust_list_1", "caption": "CI Cust List 1",
+   "values": [{"id": "1", "caption": "Active"}, {"id": "2", "caption": "Inactive"}]},
+  {"id": "ci_cust_list_2", "caption": "CI Cust List 2", "values": []}
 ]
