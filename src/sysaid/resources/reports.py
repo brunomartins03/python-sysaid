@@ -6,17 +6,20 @@ from collections.abc import Mapping
 from typing import Any
 
 from .._params import quote_segment
+from .._unverified import unverified
 from ._base import JSONList, Resource
 
 
 class Reports(Resource):
     """Report metadata and preview runs."""
 
+    @unverified
     def operators(self, type: str | None = None) -> JSONList:
         """Field operators, optionally for one data type (``string``, ``date``, ``int``...)."""
         result: JSONList = self._client.request("GET", "/reports/operators", params={"type": type})
         return result
 
+    @unverified
     def run_preview(self, report_id: int | str, definition: Mapping[str, Any]) -> Any:
         """Run a report in preview mode and return the raw JSON.
 

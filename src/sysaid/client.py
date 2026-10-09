@@ -10,6 +10,7 @@ import requests
 
 from . import auth as _auth
 from ._params import build_params, encode_json
+from ._unverified import unverified
 from .exceptions import AuthenticationError, error_from_response
 from .resources.action_items import ActionItems
 from .resources.addons import Addons
@@ -70,6 +71,7 @@ class SysAid:
         self.reports = Reports(self)
 
     @classmethod
+    @unverified
     def from_oauth(
         cls,
         base_url: str,

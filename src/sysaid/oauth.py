@@ -12,6 +12,7 @@ from urllib.parse import urlencode
 
 import requests
 
+from ._unverified import unverified
 from .client import api_url_for
 from .exceptions import error_from_response
 
@@ -39,6 +40,7 @@ def _post(
     return token
 
 
+@unverified
 def request_token(
     base_url: str,
     consumer_key: str,
@@ -53,12 +55,14 @@ def request_token(
     return _post(base_url, "/oauth/request_token", auth, verify, timeout)
 
 
+@unverified
 def authorize_url(base_url: str, request_token: str) -> str:
     """Step 2. The URL to send the user's browser to."""
     query = urlencode({"oauth_token": request_token})
     return f"{api_url_for(base_url)}/oauth/authorize?{query}"
 
 
+@unverified
 def access_token(
     base_url: str,
     consumer_key: str,

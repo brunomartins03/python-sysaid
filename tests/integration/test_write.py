@@ -6,7 +6,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from sysaid import BadRequestError, Record, SysAid, UnauthorizedError
+from sysaid import BadRequestError, Record, SysAid
 from sysaid._params import to_ms
 from sysaid.resources.service_requests import make_note
 
@@ -18,18 +18,15 @@ NOW = datetime.now(timezone.utc).replace(microsecond=0)
 
 @pytest.fixture(scope="module")
 def sr(live: SysAid, me: str) -> Iterator[Record]:
-    """An incident assigned to the logged-in user; deleted (or closed) afterwards."""
+    """An incident assigned to the logged-in user; closed afterwards."""
     created = live.service_requests.create(
         type="incident", return_fields=["title", "responsibility"], title=TITLE, responsibility=me
     )
     assert created.id is not None
     yield created
-    try:
-        live.service_requests.delete(created.id)
-    except UnauthorizedError:
-        # No purge permission: leave it closed (a 400 means it already is).
-        with suppress(BadRequestError):
-            live.service_requests.close(created.id, "integration test finished")
+    # Deleting is a disabled feature, so the SR is left closed (a 400 means it already is).
+    with suppress(BadRequestError):
+        live.service_requests.close(created.id, "integration test finished")
 
 
 def read(live: SysAid, sr: Record, *fields: str) -> Record:

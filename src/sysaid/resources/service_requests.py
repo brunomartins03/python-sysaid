@@ -9,6 +9,7 @@ from os import PathLike
 from typing import Any
 
 from .._params import encode_info, encode_value, quote_segment
+from .._unverified import unverified
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query, read_upload
 
@@ -160,6 +161,7 @@ class ServiceRequests(Resource):
         body = None if solution is None else {"solution": solution}
         self._client.request("PUT", f"/sr/{quote_segment(sr_id)}/close", json=body)
 
+    @unverified
     def delete(self, ids: int | str | Sequence[int | str]) -> None:
         """Delete one or more SRs."""
         id_list = [ids] if isinstance(ids, (int, str)) else ids

@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterator, Sequence
 
 from .._params import quote_segment
+from .._unverified import unverified
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
 
@@ -12,6 +13,7 @@ from ._base import DEFAULT_PAGE_SIZE, RecordList, Resource, query
 class Assets(Resource):
     """Read-only access to assets."""
 
+    @unverified
     def list(
         self,
         *,
@@ -25,6 +27,7 @@ class Assets(Resource):
         params = query(view=view, fields=fields, type=type, offset=offset, limit=limit)
         return self._list("/asset", params)
 
+    @unverified
     def iter(
         self,
         *,
@@ -36,12 +39,14 @@ class Assets(Resource):
         """Every asset, fetching pages transparently."""
         return self._iter("/asset", query(view=view, fields=fields, type=type), page_size=page_size)
 
+    @unverified
     def get(
         self, asset_id: str, *, view: str | None = None, fields: Sequence[str] | None = None
     ) -> Record:
         """One asset; ``view`` is an Asset Form view."""
         return self._get(f"/asset/{quote_segment(asset_id)}", query(view=view, fields=fields))
 
+    @unverified
     def search(
         self,
         text: str,

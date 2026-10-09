@@ -6,6 +6,7 @@ from collections.abc import Iterable, Iterator, Mapping, Sequence
 from typing import Any
 
 from .._params import encode_info, quote_segment
+from .._unverified import unverified
 from ..exceptions import BadRequestError, RelationError
 from ..models import Record
 from ._base import DEFAULT_PAGE_SIZE, JSONList, RecordList, Resource, query
@@ -24,6 +25,7 @@ def _relations_body(relations: Iterable[Relation]) -> list[dict[str, Any]]:
 class CIs(Resource):
     """Configuration items and their relations."""
 
+    @unverified
     def list(
         self,
         *,
@@ -51,6 +53,7 @@ class CIs(Resource):
         )
         return self._list("/ci", params)
 
+    @unverified
     def iter(
         self,
         *,
@@ -75,6 +78,7 @@ class CIs(Resource):
         )
         return self._iter("/ci", params, page_size=page_size)
 
+    @unverified
     def update(
         self, ci_id: int | str, values: Mapping[str, Any] | None = None, /, **fields: Any
     ) -> None:
@@ -82,6 +86,7 @@ class CIs(Resource):
         body = {"id": str(ci_id), "info": encode_info({**(values or {}), **fields})}
         self._client.request("PUT", f"/ci/{quote_segment(ci_id)}", json=body)
 
+    @unverified
     def types(self, *, support_barcode: bool | None = None) -> JSONList:
         """CI types."""
         result: JSONList = self._client.request(
@@ -89,22 +94,26 @@ class CIs(Resource):
         )
         return result
 
+    @unverified
     def view_fields(self, ci_type_id: int | str, *, view: str | None = None) -> Any:
         """Fields of a view for a CI type, as returned by the server."""
         return self._client.request(
             "GET", f"/ci/view/{quote_segment(ci_type_id)}", params={"view": view}
         )
 
+    @unverified
     def relation_types(self) -> JSONList:
         """Available relation types."""
         result: JSONList = self._client.request("GET", "/ci/relationtypes")
         return result
 
+    @unverified
     def relations(self, ci_id: int | str) -> JSONList:
         """Relations whose source is the given CI."""
         result: JSONList = self._client.request("GET", f"/ci/{quote_segment(ci_id)}/relation")
         return result
 
+    @unverified
     def create_relations(self, ci_id: int | str, relations: Iterable[Relation]) -> None:
         """Create relations; existing ones are not duplicated.
 
@@ -117,6 +126,7 @@ class CIs(Resource):
         except BadRequestError as exc:
             raise RelationError(exc.status_code, exc.message, exc.response) from exc
 
+    @unverified
     def delete_relations(self, ci_id: int | str, relations: Iterable[Relation]) -> None:
         """Delete relations; the server answers OK even for relations that do not exist."""
         self._client.request(
