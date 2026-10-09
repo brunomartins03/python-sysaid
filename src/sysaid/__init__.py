@@ -16,7 +16,7 @@ from .exceptions import (
 )
 from .models import Field, Record
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.1.0"
 
 __all__ = [
     "AuthenticationError",

@@ -2,7 +2,7 @@
 
 Python wrapper for the SysAid REST API (`/api/v1`, SysAid 15.4+).
 
-> Status: under development, not yet released. Requests and paths come from the SysAid
+> Status: alpha, under development. Requests and paths come from the SysAid
 > documentation and have not been validated against a live server yet.
 
 ## Installation
