@@ -54,3 +54,21 @@ jobs:
       - run: uv publish --check-url https://pypi.org/simple/
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+  release:
+    # Tags and releases the version on main; an already released version is skipped.
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          tag="v$(sed -n 's/^__version__ = "\(.*\)"/\1/p' src/sysaid/__init__.py)"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "$tag is already released"
+          else
+            gh release create "$tag" --target "$GITHUB_SHA" --title "$tag" --generate-notes
+          fi
