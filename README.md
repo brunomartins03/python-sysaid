@@ -103,6 +103,9 @@ client.service_requests.create(
 
 `client.service_requests.template(type="incident")` shows the mandatory fields first.
 
+Numbers, booleans and datetimes are sent as strings, which is the only form the server
+accepts for field values. `add_activity` takes the numeric id of the user.
+
 ## Resources
 
 | Attribute | Covers |
