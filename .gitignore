@@ -10,3 +10,7 @@ dist/
 .ruff_cache/
 .coverage
 .env
+
+# Local credentials, never commit
+token
+temp.sh
